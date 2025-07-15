@@ -117,6 +117,12 @@ const navItems = ref([
     icon: 'i-mdi-view-dashboard',
   },
   {
+    label: 'Analyse Tables',
+    to: '/analyse-tables',
+    visible: computed(() => !botStore.canRunBacktest),
+    icon: 'i-mdi-table-large',
+  },
+  {
     label: 'Chart',
     to: '/graph',
     icon: 'i-mdi-chart-line',
