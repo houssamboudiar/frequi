@@ -1,17 +1,27 @@
+# Dependencies
 .DS_Store
 node_modules
 package-lock.json
 /dist
 
+# Build outputs
+/build
+/out
 
-# local env files
+# Environment files
+.env
 .env.local
 .env.*.local
+
+# Personal configurations
+config.personal.json
+*.personal.*
 
 # Log files
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
 # Yarn stuff
 .yarn/*
@@ -31,8 +41,25 @@ yarn-error.log*
 *.sln
 *.sw?
 
-
+# Testing
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+/coverage/
+
+# Personal development
+*.backup
+*.tmp
+*.temp
+/personal/
+/drafts/
+
+# OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Personal notes and docs
+/notes/
+TODO.personal.md

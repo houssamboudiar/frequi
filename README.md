@@ -1,117 +1,111 @@
-# FreqUI
+# Houssam's Personal FreqUI
 
-[![Open in Visual Studio Code](https://img.shields.io/static/v1?logo=visualstudiocode&label=&message=Open%20in%20Visual%20Studio%20Code&labelColor=2c2c32&color=007acc&logoColor=007acc)](https://open.vscode.dev/freqtrade/frequi)
-[![Freqtrade CI](https://github.com/freqtrade/frequi/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/freqtrade/frequi/actions/)
+This is my personal fork and customization of FreqUI - the web interface for Freqtrade. This repository contains my custom UI modifications, themes, and enhancements for my personal trading bot dashboard.
 
-Freqtrade UI build with [Vue.js](https://vuejs.org/) and [primevue](https://primevue.org/).
+## About This Fork
 
-## WARNING
+This repository is based on [FreqUI](https://github.com/freqtrade/frequi) - the official web UI for Freqtrade. I've customized it with:
 
-This project is still in its early stages (consider it alpha), and is not yet stable nor recommended to be used for production usages.
+- 🎨 **Custom Themes**: Personalized color schemes and layouts
+- 📊 **Enhanced Charts**: Custom indicators and EMA visualizations
+- ⚡ **Performance Tweaks**: Optimized for my trading workflow
+- 🔧 **Custom Components**: Additional UI elements for my specific needs
 
-## Run this project
+Built with [Vue.js](https://vuejs.org/) and [PrimeVue](https://primevue.org/).
 
-Using FreqUI, does require [freqtrade](https://github.com/freqtrade/freqtrade) to be setup and running.
-In newer versions (2021.2 and newer), freqUI is builtin to freqtrade, so manual setup of freqUI will no longer be necessary unless you want to modify freqUI.
-Instructions for this end-user setup can be found in the [freqtrade API documentation](https://www.freqtrade.io/en/stable/rest-api/).
+## Integration with My Freqtrade Bot
 
-### Running a standalone version of FreqUI
+This UI connects to my personalized Freqtrade bot: [houssamboudiar/freqtrade](https://github.com/houssamboudiar/freqtrade)
 
-Using Docker, you can also run a pre-built docker image of FreqUI.
+## 🚀 Quick Start
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16 or higher)
+- [PNPM](https://pnpm.io/) package manager
+- My personalized [Freqtrade bot](https://github.com/houssamboudiar/freqtrade) running with API enabled
+
+### Setup & Run
+
+1. **Clone this repository**:
+   ```bash
+   git clone https://github.com/houssamboudiar/frequi.git
+   cd frequi
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
+
+3. **Start development server**:
+   ```bash
+   pnpm run dev
+   ```
+
+4. **Access the UI**: Open http://localhost:3000
+
+### Docker Setup
 
 ```bash
 docker compose up -d
+# Access using http://localhost:3000/
 ```
 
-This will start a pre-built container with FreqUI running on port 3000 - which defaults to the latest version of freqUI.
-You can use `docker compose pull` to update to the latest version of the UI.
+## 🎨 My Customizations
 
-Please note: This is a standalone version of FreqUI, and will still require a correctly configured freqtrade bot.
-You'll need to correctly configure [CORS](https://www.freqtrade.io/en/stable/rest-api/#cors) in freqtrade to allow FreqUI to connect to the API.
+- **EMA Indicators**: Custom EMA visualization that integrates with my Redis-based EMA scripts
+- **Personal Dashboard**: Tailored layout for my trading strategy monitoring
+- **Custom Alerts**: Enhanced notification system for my trading signals
+- **Performance Metrics**: Additional charts for my specific trading analytics
 
-## Developer project setup
+## ⚙️ Configuration
 
-It will require [freqtrade](https://github.com/freqtrade/freqtrade) to be running on the same host with the API enabled under (`localhost:8080`). You can either use the webpack proxy (port can be changed in `vue.config.js`) - or connect directly to the API (recommended).
+Make sure your Freqtrade bot (from my personal repository) has CORS configured for:
+- `http://localhost:3000` (development)
+- `http://127.0.0.1:3000` (alternative)
 
-You will also have to have CORS for freqtrade configured correctly based on the [freqtrade documentation](https://www.freqtrade.io/en/stable/rest-api/#cors).
-Most likely, the correct entry will be `http://localhost:3000` or `http://127.0.0.1:3000` - but the URL must match the URL you use to access FreqUI.
-Ports can vary, so check the URL you're using.
-
-### Project setup
-
+Add this to your `user_data/config.json`:
+```json
+{
+  "api_server": {
+    "enabled": true,
+    "listen_ip_address": "0.0.0.0",
+    "listen_port": 8080,
+    "CORS_origins": ["http://localhost:3000", "http://127.0.0.1:3000"]
+  }
+}
 ```
-pnpm install
-```
+## 🛠️ Development Commands
 
-### Compiles and hot-reloads for development
-
-```
-pnpm run dev
-```
-
-### Compiles and minifies for production
-
-```
+### Build for production
+```bash
 pnpm run build
 ```
 
-### Lints and fixes files
-
-```
+### Lint and fix files
+```bash
 pnpm run lint
 ```
 
 ### Build and run docker version
-
-```
+```bash
 docker-compose build
 docker-compose up -d
-
-# Access using http://localhost:3000/
 ```
 
+## 📖 Original FreqUI Information
 
-### Customize configuration
+This fork is based on FreqUI - the official web interface for Freqtrade. For original documentation and community support:
+- 📖 [Original FreqUI Repository](https://github.com/freqtrade/frequi)
+- 🤖 [Freqtrade Documentation](https://www.freqtrade.io)
+- 💬 [Discord Community](https://discord.gg/freqtrade)
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 🔗 Related Repositories
 
-## Project setup for docker (developing inside dev container) without vscode
+- 🤖 [My Personal Freqtrade Bot](https://github.com/houssamboudiar/freqtrade) - The backend trading bot
+- 📊 Custom EMA scripts integration
+- ⚙️ Personalized trading strategies
 
-### Built dev docker image and run container(s) detached
+---
 
-```
-cd .devcontainer
-docker-compose up -d
-```
-
-### Go inside web-service container and serve
-
-```
-docker-compose exec web /bin/bash
-```
-
-then
-
-```
-pnpm run dev
-```
-
-## Project setup for vscode and docker (developing inside dev container) on Linux
-
-The goal is to have a complete dev environment very quickly and isolated.
-
-### Install missing tools if needed
-
-Follow [getting started](https://code.visualstudio.com/docs/remote/containers#_getting-started) section.
-
-### Build your dev container
-
-View > Command palette > Enter: Remote-Containers rebuild container
-
-### Serve your local server
-
-```
-pnpm run dev
-```
-
-You now have useful vscode extensions, git support, your command history of the project.
+*This is a personal fork of [FreqUI](https://github.com/freqtrade/frequi) customized by Houssam Boudiar for personal trading dashboard needs.*
