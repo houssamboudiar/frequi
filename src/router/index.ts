@@ -42,6 +42,16 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/AnalyseTablesView.vue'),
   },
   {
+    path: '/volume-screener',
+    name: 'Volume Screener',
+    component: () => import('@/views/VolumeScreenerView.vue'),
+  },
+  {
+    path: '/volume-backtest',
+    name: 'Volume Backtest',
+    component: () => import('@/views/VolumeBacktestView.vue'),
+  },
+  {
     path: '/balance',
     name: 'Freqtrade Balance',
     component: () => import('@/components/ftbot/BotBalance.vue'),
