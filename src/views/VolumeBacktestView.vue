@@ -19,12 +19,12 @@ interface AnalysisResult {
   volumeIncrease: number;
   currentBuyingVolume: number;
   previousBuyingVolume: number;
-  buyingVolumeRatio: number;
-  buyingVolumeIncrease: number;
+  buyingVolumeRatio: number | string;
+  buyingVolumeIncrease: number | string;
   currentSellingVolume: number;
   previousSellingVolume: number;
-  sellingVolumeRatio: number;
-  sellingVolumeIncrease: number;
+  sellingVolumeRatio: number | string;
+  sellingVolumeIncrease: number | string;
   buyingPercentage: number;
   sellingPercentage: number;
   // Profile-specific data
@@ -41,16 +41,16 @@ interface MinuteSpike {
   timestamp: number;
   currentVolume: number;
   previousVolume: number;
-  volumeRatio: number;
-  volumeIncrease: number;
+  volumeRatio: number | 'N/A';
+  volumeIncrease: number | 'N/A';
   currentBuyingVolume: number;
   previousBuyingVolume: number;
-  buyingVolumeRatio: number;
-  buyingVolumeIncrease: number;
+  buyingVolumeRatio: number | 'N/A';
+  buyingVolumeIncrease: number | 'N/A';
   currentSellingVolume: number;
   previousSellingVolume: number;
-  sellingVolumeRatio: number;
-  sellingVolumeIncrease: number;
+  sellingVolumeRatio: number | 'N/A';
+  sellingVolumeIncrease: number | 'N/A';
   buyingPercentage: number;
   sellingPercentage: number;
   profileType: 'sudden-volume' | 'ema-analysis';
@@ -341,15 +341,24 @@ async function fetchMinuteData(symbol: string, hourTimestamp: number): Promise<M
       const previousBuyingVolumeUSDT = parseFloat(prevTakerBuyQuoteAssetVolume);
       const previousSellingVolumeUSDT = previousVolumeUSDT - previousBuyingVolumeUSDT;
       
-      // Calculate volume increases
-      const volumeRatio = previousVolumeUSDT > 0 ? currentVolumeUSDT / previousVolumeUSDT : 0;
-      const volumeIncrease = ((volumeRatio - 1) * 100);
+      // Calculate volume increases with N/A handling
+      let volumeRatio: number | 'N/A' = previousVolumeUSDT > 0 ? currentVolumeUSDT / previousVolumeUSDT : 'N/A';
+      let volumeIncrease: number | 'N/A' = volumeRatio !== 'N/A' ? ((volumeRatio - 1) * 100) : 'N/A';
       
-      const buyingVolumeRatio = previousBuyingVolumeUSDT > 0 ? currentBuyingVolumeUSDT / previousBuyingVolumeUSDT : 0;
-      const buyingVolumeIncrease = ((buyingVolumeRatio - 1) * 100);
+      let buyingVolumeRatio: number | 'N/A' = 'N/A';
+      let buyingVolumeIncrease: number | 'N/A' = 'N/A';
+      let sellingVolumeRatio: number | 'N/A' = 'N/A';
+      let sellingVolumeIncrease: number | 'N/A' = 'N/A';
+
+      if (previousBuyingVolumeUSDT > 0) {
+        buyingVolumeRatio = currentBuyingVolumeUSDT / previousBuyingVolumeUSDT;
+        buyingVolumeIncrease = ((buyingVolumeRatio - 1) * 100);
+      }
       
-      const sellingVolumeRatio = previousSellingVolumeUSDT > 0 ? currentSellingVolumeUSDT / previousSellingVolumeUSDT : 0;
-      const sellingVolumeIncrease = ((sellingVolumeRatio - 1) * 100);
+      if (previousSellingVolumeUSDT > 0) {
+        sellingVolumeRatio = currentSellingVolumeUSDT / previousSellingVolumeUSDT;
+        sellingVolumeIncrease = ((sellingVolumeRatio - 1) * 100);
+      }
       
       // Calculate percentages
       const buyingPercentage = currentVolumeUSDT > 0 ? (currentBuyingVolumeUSDT / currentVolumeUSDT) * 100 : 0;
@@ -763,13 +772,31 @@ async function fetchHistoricalCandles(symbol: string, hours: number): Promise<An
       const volumeRatio = previousVolumeUSDT > 0 ? currentVolumeUSDT / previousVolumeUSDT : 0;
       const volumeIncrease = ((volumeRatio - 1) * 100);
       
+      // Calculate volume increases with proper handling of zero or invalid previous volumes
+      let buyingVolumeRatio: number | 'N/A' = 'N/A';
+      let buyingVolumeIncrease: number | 'N/A' = 'N/A';
+      let sellingVolumeRatio: number | 'N/A' = 'N/A';
+      let sellingVolumeIncrease: number | 'N/A' = 'N/A';
+
       // Calculate buying volume increase
-      const buyingVolumeRatio = previousBuyingVolumeUSDT > 0 ? currentBuyingVolumeUSDT / previousBuyingVolumeUSDT : 0;
-      const buyingVolumeIncrease = ((buyingVolumeRatio - 1) * 100);
+      if (previousBuyingVolumeUSDT <= 0 || isNaN(previousBuyingVolumeUSDT)) {
+        // If there was no previous buying volume or invalid data, mark as N/A
+        buyingVolumeRatio = 'N/A';
+        buyingVolumeIncrease = 'N/A';
+      } else {
+        buyingVolumeRatio = currentBuyingVolumeUSDT / previousBuyingVolumeUSDT;
+        buyingVolumeIncrease = ((buyingVolumeRatio - 1) * 100);
+      }
       
       // Calculate selling volume increase
-      const sellingVolumeRatio = previousSellingVolumeUSDT > 0 ? currentSellingVolumeUSDT / previousSellingVolumeUSDT : 0;
-      const sellingVolumeIncrease = ((sellingVolumeRatio - 1) * 100);
+      if (previousSellingVolumeUSDT <= 0 || isNaN(previousSellingVolumeUSDT)) {
+        // If there was no previous selling volume or invalid data, mark as N/A
+        sellingVolumeRatio = 'N/A';
+        sellingVolumeIncrease = 'N/A';
+      } else {
+        sellingVolumeRatio = currentSellingVolumeUSDT / previousSellingVolumeUSDT;
+        sellingVolumeIncrease = ((sellingVolumeRatio - 1) * 100);
+      }
       
       // Calculate buying/selling percentages
       const buyingPercentage = currentVolumeUSDT > 0 ? (currentBuyingVolumeUSDT / currentVolumeUSDT) * 100 : 0;
@@ -1005,10 +1032,10 @@ function exportToCSV() {
       spike.volumeIncrease.toFixed(2),
       spike.currentBuyingVolume.toFixed(2),
       spike.previousBuyingVolume.toFixed(2),
-      spike.buyingVolumeIncrease.toFixed(2),
+      typeof spike.buyingVolumeIncrease === 'number' ? spike.buyingVolumeIncrease.toFixed(2) : 'N/A',
       spike.currentSellingVolume.toFixed(2),
       spike.previousSellingVolume.toFixed(2),
-      spike.sellingVolumeIncrease.toFixed(2),
+      typeof spike.sellingVolumeIncrease === 'number' ? spike.sellingVolumeIncrease.toFixed(2) : 'N/A',
       spike.buyingPercentage.toFixed(1),
       spike.sellingPercentage.toFixed(1)
     ].join(','))
@@ -1357,7 +1384,8 @@ watch(profileParameters, () => {
                     'text-danger': data.buyingVolumeIncrease < 0
                   }"
                 >
-                  {{ data.buyingVolumeIncrease > 0 ? '+' : '' }}{{ data.buyingVolumeIncrease.toFixed(1) }}%
+                  {{ data.buyingVolumeIncrease === Number.MAX_VALUE ? 'NEW' : 
+                     (data.buyingVolumeIncrease > 0 ? '+' : '') + data.buyingVolumeIncrease.toFixed(1) + '%' }}
                 </span>
               </template>
             </Column>
@@ -1379,7 +1407,8 @@ watch(profileParameters, () => {
                     'text-danger': data.sellingVolumeIncrease < 0
                   }"
                 >
-                  {{ data.sellingVolumeIncrease > 0 ? '+' : '' }}{{ data.sellingVolumeIncrease.toFixed(1) }}%
+                  {{ data.sellingVolumeIncrease === Number.MAX_VALUE ? 'NEW' : 
+                     (data.sellingVolumeIncrease > 0 ? '+' : '') + data.sellingVolumeIncrease.toFixed(1) + '%' }}
                 </span>
               </template>
             </Column>
@@ -1466,12 +1495,14 @@ watch(profileParameters, () => {
                       <span 
                         class="font-mono font-weight-bold text-xs"
                         :class="{
-                          'text-success': data.volumeIncrease > 500,
-                          'text-warning': data.volumeIncrease > 300 && data.volumeIncrease <= 500,
-                          'text-info': data.volumeIncrease <= 300
+                          'text-muted': data.volumeIncrease === 'N/A',
+                          'text-success': typeof data.volumeIncrease === 'number' && data.volumeIncrease > 500,
+                          'text-warning': typeof data.volumeIncrease === 'number' && data.volumeIncrease > 300 && data.volumeIncrease <= 500,
+                          'text-info': typeof data.volumeIncrease === 'number' && data.volumeIncrease <= 300
                         }"
                       >
-                        +{{ data.volumeIncrease.toFixed(1) }}%
+                        {{ data.volumeIncrease === 'N/A' ? 'N/A' : 
+                           '+' + data.volumeIncrease.toFixed(1) + '%' }}
                       </span>
                     </template>
                   </Column>
@@ -1493,7 +1524,9 @@ watch(profileParameters, () => {
                           'text-danger': data.buyingVolumeIncrease < 0
                         }"
                       >
-                        {{ data.buyingVolumeIncrease > 0 ? '+' : '' }}{{ data.buyingVolumeIncrease.toFixed(1) }}%
+                        {{ typeof data.buyingVolumeIncrease === 'number' ? 
+                      (data.buyingVolumeIncrease > 0 ? '+' : '') + data.buyingVolumeIncrease.toFixed(1) + '%' : 
+                      'N/A' }}
                       </span>
                     </template>
                   </Column>
@@ -1515,7 +1548,9 @@ watch(profileParameters, () => {
                           'text-danger': data.sellingVolumeIncrease < 0
                         }"
                       >
-                        {{ data.sellingVolumeIncrease > 0 ? '+' : '' }}{{ data.sellingVolumeIncrease.toFixed(1) }}%
+                        {{ typeof data.sellingVolumeIncrease === 'number' ? 
+                      (data.sellingVolumeIncrease > 0 ? '+' : '') + data.sellingVolumeIncrease.toFixed(1) + '%' : 
+                      'N/A' }}
                       </span>
                     </template>
                   </Column>

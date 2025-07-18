@@ -123,16 +123,21 @@ const navItems = ref([
     icon: 'i-mdi-table-large',
   },
   {
-    label: 'Volume Screener',
-    to: '/volume-screener',
-    visible: computed(() => !botStore.canRunBacktest),
-    icon: 'i-mdi-magnify-scan',
-  },
-  {
     label: 'Volume Backtest',
     to: '/volume-backtest',
     visible: computed(() => !botStore.canRunBacktest),
     icon: 'i-mdi-history',
+  },
+  {
+    label: 'Daily Volume',
+    to: '/daily-volume',
+    icon: 'i-mdi-chart-bar',
+  },
+  {
+    label: 'Trend Screener',
+    to: '/trend-screener',
+    visible: computed(() => !botStore.canRunBacktest),
+    icon: 'i-mdi-trending-up',
   },
   {
     label: 'Chart',

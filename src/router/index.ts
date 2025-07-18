@@ -41,11 +41,7 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Analyse Tables',
     component: () => import('@/views/AnalyseTablesView.vue'),
   },
-  {
-    path: '/volume-screener',
-    name: 'Volume Screener',
-    component: () => import('@/views/VolumeScreenerView.vue'),
-  },
+
   {
     path: '/volume-backtest',
     name: 'Volume Backtest',
@@ -92,6 +88,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/download_data',
     name: 'Download Data',
     component: () => import('@/views/DownloadDataView.vue'),
+  },
+  {
+    path: '/daily-volume',
+    name: 'Daily Volume',
+    component: () => import('@/views/DailyVolumeView.vue'),
+  },
+  {
+    path: '/trend-screener',
+    name: 'Trend Screener',
+    component: () => import('@/views/TrendScreener.vue'),
   },
   {
     path: '/(.*)*',

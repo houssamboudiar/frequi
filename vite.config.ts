@@ -61,8 +61,8 @@ export default defineConfig({
         changeOrigin: true,
       },
     },
-    host: '127.0.0.1',
-    port: 3000,
+    host: true, // Listen on all network interfaces
+    port: 3000, // Use port 3000
   },
   test: {
     environment: 'happy-dom',
